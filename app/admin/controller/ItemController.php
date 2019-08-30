@@ -3,7 +3,7 @@
 namespace app\admin\controller;
 
 use cmf\controller\AdminBaseController;
-use api\summary\model\ItemModel;
+use api\video\model\ItemModel;
 
 class ItemController extends AdminBaseController
 {

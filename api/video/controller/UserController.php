@@ -12,4 +12,5 @@ class UserController extends RestUserBaseController
 
     $this->success('获取成功！',$user);
   }
+
 }

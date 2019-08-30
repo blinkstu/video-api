@@ -1,0 +1,174 @@
+<include file="public@header" />
+<link rel="stylesheet" href="__STATIC__/js/layui/css/layui.css">
+<script src="__STATIC__/js/layui/layui.js"></script>
+<style>
+  body {
+    background: #f4f4f4;
+  }
+</style>
+</head>
+
+<body>
+
+  <div class="wrap js-check-wrap">
+    <div class="layui-row">
+      <div class="layui-col-md8">
+        <div class="layui-card">
+          <div class="layui-card-header">添加商品</div>
+          <div class="layui-card-body">
+            <form class="layui-form" lay-filter="add">
+              <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">名称</label>
+                <div class="layui-input-block">
+                  <input type="text" name="name" class="layui-input" placeholder="商品名称">
+                </div>
+              </div>
+              <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">描述</label>
+                <div class="layui-input-block">
+                  <input type="text" name="desc" class="layui-input" placeholder="描述">
+                </div>
+              </div>
+              <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">天数</label>
+                <div class="layui-input-block">
+                  <input type="number" name="days" class="layui-input" placeholder="天数">
+                </div>
+              </div>
+              <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">价格</label>
+                <div class="layui-input-block">
+                  <input type="number" name="price" class="layui-input" placeholder="元">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <div class="layui-input-block">
+                  <button class="layui-btn" lay-submit lay-filter="add">添加</button>
+                  <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <br>
+        <div class="layui-card">
+          <div class="layui-card-header">商品列表</div>
+          <div class="layui-card-body">
+            <table id="items" lay-filter="items"></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="__STATIC__/js/admin.js"></script>
+  <script type="text/html" id="bar">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+  </script>
+  <script>
+    layui.use(['layer', 'form', 'table'], function () {
+      var layer = layui.layer
+        , form = layui.form, table = layui.table;
+
+      form.render(null, 'add');
+      form.on('submit(add)', function (data) {
+        console.log(data);
+        var field = data.field;
+        $.ajax({
+          type: "POST",
+          url: "addItem",
+          data: field,
+          dataType: "json",
+          success: function (response) {
+            if (response.code == 0) {
+              layer.msg(response.msg);
+              table.reload('items');
+            } else {
+              layer.msg(response.msg);
+            }
+          }
+        });
+        return false;
+      });
+
+
+      table.render({
+        elem: '#items'
+        , id: 'items'
+        , height: 312
+        , url: 'fetchItems' //数据接口
+        , page: true //开启分页
+        , cols: [[ //表头
+          { field: 'id', title: 'ID', width: 80, sort: true, fixed: 'left' }
+          , { field: 'name', title: '名称', edit: 'text' }
+          , { field: 'description', title: '描述', edit: 'text' }
+          , { field: 'days', title: '天数', edit: 'text' }
+          , { field: 'price', title: '价格/元', edit: 'text' }
+          , { title: '操作', toolbar: '#bar' }
+        ]]
+      });
+
+      table.on('tool(items)', function (obj) {
+        var data = obj.data;
+        var tr = obj.tr;
+        switch (obj.event) {
+          case 'del':
+            $.ajax({
+              type: "POST",
+              url: "delete",
+              data: { id: data.id },
+              dataType: "json",
+              success: function (response) {
+                if (response.code == 0) {
+                  layer.msg(response.msg)
+                } else {
+                  layer.msg(response.msg)
+                  table.reload('items');
+                }
+              }
+            });
+            table.reload('items');
+            break;
+        };
+      });
+
+      table.on('edit(items)', function (obj) {
+        $.ajax({
+          type: "post",
+          url: "save",
+          data: obj.data,
+          dataType: "json",
+          success: function (response) {
+            if (response.code == 1) {
+              layer.msg(response.msg)
+            } else {
+              layer.msg(response.msg)
+              table.reload('items');
+            }
+          }
+        });
+      });
+
+
+      $('.remove').on('click', function () {
+        var self = $(this);
+        var id = self.data('id');
+        $.ajax({
+          type: "POST",
+          url: "remove",
+          data: { id: id },
+          dataType: "json",
+          success: function (re) {
+            if (re.code == 1) {
+              layer.msg(re.msg);
+              $('.item-' + id).remove();
+            } else {
+              layer.msg(re.msg)
+            }
+          }
+        });
+      })
+    });
+  </script>
+</body>
+
+</html>

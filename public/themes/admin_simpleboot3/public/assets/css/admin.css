@@ -1,0 +1,10 @@
+h3{
+  color:#006fc4;
+}
+
+.layui-form-label{
+  width: 120px !important;
+}
+.layui-input-block{
+  margin-left: 120px !important;
+}

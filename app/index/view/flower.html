@@ -1,0 +1,47 @@
+<div class="flowers">
+  <img src="/static/images/flower.png" alt=""> <a onclick="add_flower()" href="javascript:;">送小花 <b
+      class="num">{$summary['flowers']}</b></a>
+</div>
+
+
+<script>
+  var id = '{$summary.id}';
+
+  function add_flower() {
+    var flowers = parseInt($('.num').html());
+    $.ajax({
+      type: "post",
+      url: "/index/summary/add_flower",
+      data: { id: id },
+      dataType: "json",
+      success: function (response) {
+        if (response.code == 1) {
+          layui.layer.msg(response.msg)
+          $('.num').html(flowers + 1); 
+        } else {
+          layui.layer.msg(response.msg)
+        }
+      }
+    });
+  }
+
+</script>
+
+
+<style>
+  .flowers {
+    padding: 20px;
+    text-align: center;
+  }
+
+  .flowers img {
+    margin-bottom: 4px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .flowers a {
+    color: #ff3643;
+    font-weight: 500;
+  }
+</style>

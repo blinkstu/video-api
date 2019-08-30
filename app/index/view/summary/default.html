@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="__STATIC__/css/app.css?v=3">
+  <link rel="stylesheet" href="__STATIC__/js/layui/css/layui.css">
+  <script src="__STATIC__/js/jquery.js"></script>
+  <script src="__STATIC__/js/layui/layui.all.js"></script>
+  <title>{$summary.theme}</title>
+</head>
+
+<body>
+  <div class="warp">
+    <div class="white-space">
+
+    </div>
+    <div class="content">
+      <div class="header">
+        <div class="title">
+          {$summary.theme}
+        </div>
+        <div class="info">
+          讲课人：{$summary.teacher_name}
+          学校: {$summary.school_name}
+        </div>
+      </div>
+      {$summary.content}
+    </div>
+
+    <br><br>
+
+    <if condition="$comments">
+      <div class="comments">
+        <div class="title">老师评语：</div>
+        <div class="list">
+          <foreach name="comments" item="item">
+            <div class="comment">
+              <div class="name">
+                {$item.name}:
+              </div>
+              {$item.content}
+            </div>
+          </foreach>
+        </div>
+      </div>
+    </if>
+
+    <include file="flower" />
+
+    <div class="rates">
+      <foreach name="rates" item="item">
+        <div class="rate" data-value="{$item.rate}">
+          <label>{$item.name}:</label>
+          <div class="value"></div>
+        </div>
+      </foreach>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('message', function (event) {
+      window.location.reload();
+    });
+
+    layui.use('rate', function () {
+      var rate = layui.rate;
+      $('.rate').each(function () {
+        var ins1 = rate.render({
+          elem: $(this).children('.value')
+          , readonly: true
+          , value: $(this).data('value')
+        });
+      })
+      //渲染
+
+    });
+  </script>
+</body>
+
+</html>

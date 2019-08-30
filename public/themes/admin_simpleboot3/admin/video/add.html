@@ -1,0 +1,138 @@
+<include file="public@header" />
+<script src="__STATIC__/js/layui/layui.js"></script>
+<link rel="stylesheet" href="__STATIC__/js/layui/css/layui.css">
+</head>
+
+<body>
+
+  <div class="wrap col-md-8">
+    <h3>添加视频</h3>
+    <br>
+    <form class="layui-form" lay-filter="main">
+      <div class="layui-form-item">
+        <label class="layui-form-label">标题</label>
+        <div class="layui-input-block">
+          <input type="text" name="title" required lay-verify="required" placeholder="请输入标题" autocomplete="off"
+            class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">分类</label>
+        <div class="layui-input-block">
+          <select name="category" lay-verify="required">
+            <option value="">选择分类</option>
+            {$categories}
+          </select>
+        </div>
+      </div>
+      <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">视频缩略图</label>
+        <div class="layui-input-block">
+          <input id="photo-1" type="hidden" value="" name="thumbnail">
+          <img id="photo-1-preview" style="max-width:60px">
+          <a class="layui-btn layui-btn-sm layui-btn-primary"
+            href="javascript:uploadOneImage('图片上传','#photo-1');">上传</a>
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">免费视频</label>
+        <div class="layui-input-block">
+          <input type="checkbox" value="1" name="is_free" lay-skin="switch">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">视频类型</label>
+        <div class="layui-input-block">
+          <input type="checkbox" value="1" id="is_local" lay-text="本地上传|远程链接" lay-filter="localVideo" name="is_local"
+            lay-skin="switch">
+        </div>
+      </div>
+      <div class="layui-form-item remote-video">
+        <label class="layui-form-label">视频链接</label>
+        <div class="layui-input-block">
+          <input type="text" name="video_url" placeholder="请输入视频链接" autocomplete="off" class="layui-input">
+        </div>
+      </div>
+      <div class="layui-form-item layui-form-text local-video" style="display:none;">
+        <label class="layui-form-label">视频上传</label>
+        <div class="layui-input-block">
+          <input id="file-1" type="hidden" value="" name="local_video_url">
+          <a class="layui-btn layui-btn-sm layui-btn-primary"
+            href="javascript:uploadOne('视频上传','#file-1','video');">上传</a>
+          <input id="file-1-name" type="text" name="file_name" title="视频">
+        </div>
+      </div>
+      <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">视频简介</label>
+        <div class="layui-input-block">
+          <textarea name="description" placeholder="请输入内容" class="layui-textarea"></textarea>
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <div class="layui-input-block">
+          <button class="layui-btn" lay-submit lay-filter="*">提交</button>
+          <a href="/admin/video/" class="layui-btn layui-btn-primary">返回</a>
+        </div>
+      </div>
+  </div>
+  </form>
+
+
+
+  </div>
+
+  <script src="__STATIC__/js/admin.js"></script>
+  <script>
+    $('.save').on('click', function () {
+      parent.layer.closeAll()
+    })
+
+    layui.use('form', function () {
+      var form = layui.form;
+
+      form.verify({
+        url: function (value, item) {
+          if (!new RegExp("(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]").test(value)) {
+            var is_local = $('#is_local').val() == 1;
+            if (!is_local) {
+              return '请输入正规链接'
+            }
+
+          }
+        }
+      });
+
+      form.on('switch(localVideo)', function (data) {
+        var checked = data.elem.checked;
+        if (checked) {
+          $('.remote-video').hide();
+          $('input[name="video_url"]').val('');
+          $('input[name="file_name"]').val('');
+          $('.local-video').show();
+        } else {
+          $('.local-video').hide();
+          $('input[name="local_video_url"]').val('');
+          $('.remote-video').show();
+        }
+      });
+      form.on('submit(*)', function (data) {
+        $.ajax({
+          type: "POST",
+          url: "/admin/video/addPost",
+          data: data.field,
+          dataType: "json",
+          success: function (response) {
+            if (response.code == 1) {
+              window.location.href = "/admin/video/"
+            } else {
+              layer.msg(response.msg)
+            }
+          }
+        });
+        return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+      });
+    });
+  </script>
+</body>
+
+</html>

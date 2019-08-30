@@ -1,0 +1,59 @@
+<include file="public@header" />
+<script src="__STATIC__/js/layui/layui.js"></script>
+<link rel="stylesheet" href="__STATIC__/js/layui/css/layui.css">
+</head>
+<style>
+  .layui-table-view .layui-table td {
+    position: relative;
+  }
+</style>
+
+<body>
+
+  <div class="wrap">
+    <h3>分类管理</h3>
+    <br>
+    <div class="well">
+      <a class="layui-btn layui-btn-sm" href="add">添加分类</a>
+    </div>
+
+    <table class="layui-table">
+      <tr>
+        <th>名称</th>
+        <th width="200"> 操作</th>
+      </tr>
+      {$categories}
+    </table>
+
+  </div>
+
+
+  <script>
+    $('.delete').on('click', function (e) {
+      var id = $(this).parent().parent().data('id')
+      layui.use(['layer'], function () {
+        var layer = layui.layer;
+        layer.confirm('确定要删除分类？子分类也将被删除！', {
+          btn: ['确定', '取消']
+          , yes: function (index) {
+            $.ajax({
+              type: "POST",
+              url: "/admin/category/DeletePost",
+              data: { id: id },
+              dataType: "json",
+              success: function (response) {
+                if (response.code == 1) {
+                  window.location.reload();
+                } else {
+                  layer.msg(response.msg);
+                }
+              }
+            });
+          }
+        });
+      })
+    })
+  </script>
+</body>
+
+</html>

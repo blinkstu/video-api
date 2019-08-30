@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="__STATIC__/js/layui/css/layui.css">
+  <script src="__STATIC__/js/jquery.js"></script>
+  <script src="__STATIC__/js/layui/layui.all.js"></script>
+  <title>{$summary.theme}</title>
+  <style>
+  .wrap{
+    background: #fff;
+  }
+  </style>
+</head>
+
+<body>
+  <div class="warp">
+      您现在将要查看的文章不可用，机构账号过期未续费！
+  </div>
+
+  <script>
+    window.addEventListener('message', function (event) {
+      window.location.reload();
+    });
+
+    layui.use('rate', function () {
+      var rate = layui.rate;
+      $('.rate').each(function () {
+        var ins1 = rate.render({
+          elem: $(this).children('.value')
+          , readonly: true
+          , value: $(this).data('value')
+        });
+      })
+      //渲染
+
+    });
+  </script>
+</body>
+
+</html>

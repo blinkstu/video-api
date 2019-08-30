@@ -1,0 +1,73 @@
+<include file="public@header" />
+<script src="__STATIC__/js/layui/layui.js"></script>
+<link rel="stylesheet" href="__STATIC__/js/layui/css/layui.css">
+</head>
+<style>
+  .layui-table-view .layui-table td {
+    position: relative;
+  }
+</style>
+
+<body>
+
+  <div class="wrap">
+    <h3>视频管理</h3>
+    <br>
+    <div class="well">
+      <a class="layui-btn layui-btn-sm" href="add">添加视频</a>
+    </div>
+
+    <table id="main-table" lay-filter="main"></table>
+
+  </div>
+
+
+  <script>
+    layui.use(['table'], function () {
+      var table = layui.table;
+
+      table.render({
+        id: 'main'
+        , elem: '#main-table'
+        , height: 312
+        , url: '/admin/video/indexGet' //数据接口
+        , page: true //开启分页
+        , cols: [[ //表头
+          { field: 'id', title: 'ID', width: 80, sort: true, fixed: 'left' }
+          , { field: 'title', title: '标题' }
+          , { title: '分类', templet: function (d) { return d.category.name }, width: 100 }
+          , { field: 'description', title: '简介', width: 180, sort: true }
+          , { field: 'views', title: '浏览量', width: 80, sort: true }
+          , { title: '操作', width: 135, templet: function (d) { return '<button type="button"  lay-event="edit" class="layui-btn layui-btn-normal layui-btn-sm">编辑</button><button type="button" lay-event="del"  class="layui-btn layui-btn-danger layui-btn-sm">删除</button>' } }
+        ]]
+      });
+
+      table.on('tool(main)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+        var data = obj.data;
+        var layEvent = obj.event;
+        var tr = obj.tr;
+
+        if (layEvent === 'edit') { //查看
+          window.location.href = "/admin/video/edit?id=" + data.id;
+        } else if (layEvent === 'del') {
+          $.ajax({
+            type: "POST",
+            url: "/admin/video/deletePost",
+            data: { id: data.id },
+            dataType: "json",
+            success: function (response) {
+              if (response.code == 1) {
+                table.reload('main');
+              } else {
+                layer.msg(response.msg)
+              }
+            }
+          });
+        }
+      });
+    })
+
+  </script>
+</body>
+
+</html>

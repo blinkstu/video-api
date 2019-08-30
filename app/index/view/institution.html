@@ -1,0 +1,90 @@
+<if condition="$institution.extra.show_enabled">
+  <div class="wrap">
+    <span class="title">{$institution.name}</span>
+    <div class="info-card">
+      <div class="logo">
+        <img src="{$institution.extra.logo_url}" alt="">
+      </div>
+      <p class="desc">{$institution.description}</p>
+    </div>
+    <hr>
+    <div class="images">
+      <foreach name="institution.extra.institution_pics" item="vo">
+        <img src="{$vo}" alt="">
+      </foreach>
+    </div>
+    <hr>
+    <div class="contact">
+      <div class="left">
+        <img src="{$institution.extra.contact_wx_url}" alt="">
+      </div>
+      <div class="right">
+        <p>联系人： {$institution.extra.contact_name}</p>
+        <p>联系电话： {$institution.extra.contact_phone}</p>
+        <p>地址： {$institution.location}</p>
+      </div>
+    </div>
+  </div>
+</if>
+
+
+
+<style>
+  .wrap {
+    margin: 15px;
+    background: white;
+    border-radius: 15px;
+    padding: 15px;
+  }
+
+  .wrap .title {
+    text-align: center;
+    display: block;
+  }
+
+  .info-card {
+    text-align: center;
+  }
+
+  .info-card .logo {
+    height: 70px;
+    overflow: hidden;
+  }
+
+  .info-card .logo img {
+    max-height: 100%;
+  }
+
+  .info-card .desc {
+    padding: 10px 0px;
+    color: #888;
+
+  }
+
+  .wrap .images img {
+    width: 88%;
+    margin: 10px;
+    border: 11px solid white;
+    box-shadow: 0px 0px 6px -1px rgba(0, 0, 0, 0.2);
+    display: block;
+  }
+
+  .contact {
+    display: flex;
+  }
+
+  .left {
+    max-width: 118px;
+    overflow: hidden;
+  }
+
+  .left img {
+    max-width: 100%;
+  }
+
+  .right {
+    font-size: 14px;
+    padding-left: 10px;
+    color: #888;
+  }
+</style>

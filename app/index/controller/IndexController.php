@@ -7,6 +7,7 @@ use think\facade\View;
 class IndexController extends Controller
 {
   public function index(){
-    return View('/index');
+    return 'None';
+    //return View('/index');
   }
 }

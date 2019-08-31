@@ -223,9 +223,8 @@ class RestBaseController
      * @param array $header 发送的Header信息
      * @return void
      */
-    protected function success($msg = '', $data = '', array $header = [])
+    protected function success($msg = '', $data = '', array $header = [], $code = 1)
     {
-        $code   = 1;
         $result = [
             'code' => $code,
             'msg'  => $msg,

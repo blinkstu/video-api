@@ -8,7 +8,7 @@ class UserController extends RestUserBaseController
 {
   public function user_info(){
     $userId = $this->getUserId();
-    $user = UserModel::where(['id'=>$userId])->find();
+    $user = UserModel::where(['id'=>$userId])->with('vip')->find();
 
     $this->success('获取成功！',$user);
   }

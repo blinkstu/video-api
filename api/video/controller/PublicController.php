@@ -8,12 +8,62 @@
 // +----------------------------------------------------------------------
 namespace api\video\controller;
 
+use api\video\model\PromotionLogModel;
+use api\video\model\RewardLogModel;
+use api\video\model\UserModel;
+use api\video\model\UserPromotionModel;
+use api\video\model\UserVipModel;
 use think\Db;
 use think\facade\Validate;
 use cmf\controller\RestBaseController;
 
 class PublicController extends RestBaseController
 {
+
+  //注册奖励机制
+  private function promotion($code)
+  {
+    $userPromotion = UserPromotionModel::where('code', $code)->find();
+    if ($userPromotion) {
+      $userId = $userPromotion['user_id'];
+
+      //增加推广记录
+      PromotionLogModel::create([
+        'user_id' => $userId
+      ]);
+
+      //为用户增加VIP时间
+      RewardLogModel::create([
+        'user_id' => $userId,
+        'content' => '赠送一小时VIP'
+      ]);
+      $currentTime = time();
+      $user = UserModel::where('id', $userId)->with('vip')->find();
+      if ($user['vip']) {
+        $userExpireTime = $user['vip']['expire_time'];
+        if ($userExpireTime < $currentTime) {
+          $userExpireTime = null;
+        }
+      } else {
+        $userExpireTime = null;
+      }
+      $hours = 1;
+      if ($userExpireTime) {
+        $expireTime = $userExpireTime + $hours * 60 * 60;
+      } else {
+        $expireTime = $currentTime + $hours * 24 * 60 * 60;
+      }
+      $check = UserVipModel::where('user_id', $userId)->find();
+      if ($check) {
+        $result = UserVipModel::where('user_id', $userId)->update([
+          'expire_time' => $expireTime
+        ]);
+      } else {
+        $result = UserVipModel::create(['user_id' => $userId, 'expire_time' => $expireTime, 'vip_level_name' => '临时']);
+      }
+    }
+  }
+
   /**
    *  用户注册
    * @throws \think\Exception
@@ -41,6 +91,10 @@ class PublicController extends RestBaseController
     $data = $this->request->param();
     if (!$validate->check($data)) {
       $this->error($validate->getError());
+    }
+
+    if ($data['invite_code']) {
+      $this->promotion($data['invite_code']);
     }
 
     $user = [];
@@ -108,7 +162,7 @@ class PublicController extends RestBaseController
         ]);
     }
 
-    $this->success("注册成功!",['token'=>$token]);
+    $this->success("注册成功!", ['token' => $token]);
   }
 
   /**

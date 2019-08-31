@@ -10,6 +10,7 @@
 // +----------------------------------------------------------------------
 namespace api\video\controller;
 
+use api\video\model\UserModel;
 use cmf\controller\RestBaseController;
 use think\facade\Validate;
 use think\View;
@@ -31,12 +32,17 @@ class VerificationCodeController extends RestBaseController
         ]);
 
         $validate->message([
-            'username.require' => '请输入手机号或邮箱!',
+            'username.require' => '请输入手机号!',
         ]);
 
         $data = $this->request->param();
         if (!$validate->check($data)) {
             $this->error($validate->getError());
+        }
+
+        $check = UserModel::where('mobile',$data['username'])->find();
+        if($check){
+            $this->error('此手机号已存在！');
         }
 
         $accountType = '';
